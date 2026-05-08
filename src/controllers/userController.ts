@@ -48,7 +48,8 @@ const login = async (c: Context<AppEnv>) => {
     return c.json(response);
   } catch (error) {
     if (error instanceof Error) {
-      return c.json({ error: error.message }, 500);
+      const status = error.message === 'User not found' || error.message === 'Invalid password' ? 401 : 500;
+      return c.json({ error: error.message }, status);
     }
     return c.json({ error: 'An unexpected error occurred' }, 500);
   }

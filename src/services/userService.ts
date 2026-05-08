@@ -45,7 +45,13 @@ const login = async (identifier: string, password: string) => {
         if (!isPasswordValid) {
             throw new Error('Invalid password');
         }
-        return user;
+        const token = await common.generateToken({
+            webId: user.webId,
+            username: user.username,
+            email: user.email
+        });
+        const { password: _password, ...userWithoutPassword } = user;
+        return { token, ...userWithoutPassword };
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);

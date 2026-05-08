@@ -44,7 +44,7 @@ const login = async (identifier: string, password: string) => {
 const findUserByUsernameOrEmail = async (identifier: string) => {
     try {
         const response = await query(
-            'SELECT * FROM users WHERE username = $1 OR email = $1',
+            'SELECT id, web_id AS "webId", username, email, password, created_at AS "createdAt", updated_at AS "updatedAt" FROM users WHERE username = $1 OR email = $1',
             [identifier]
         ) as any[];
         return response[0] ?? null;
@@ -56,7 +56,10 @@ const findUserByUsernameOrEmail = async (identifier: string) => {
 
 const getAllUsersByWebId = async (webId: number) => {
     try {
-        const response = await query('SELECT * FROM users WHERE web_id = $1', [webId]) as any[];
+        const response = await query(
+            'SELECT id, web_id AS "webId", username, email, password, created_at AS "createdAt", updated_at AS "updatedAt" FROM users WHERE web_id = $1',
+            [webId]
+        ) as any[];
         return response;
     } catch (error) {
         return [];
