@@ -3,21 +3,28 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev --local --env .env",
+    "build": "wrangler build",
+    "start": "tsx src/server.ts",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "publish:db": "node ./database/scripts/publish.mjs"
   },
   "dependencies": {
+    "@hono/node-server": "^2.0.2",
     "@neondatabase/serverless": "^1.1.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "hono": "^4.12.18",
     "jose": "^6.2.3",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^8.0.7",
+    "resend": "^6.12.3",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.6.2",
+    "@types/nodemailer": "^8.0.0",
     "wrangler": "^4.4.0"
   }
 }
