@@ -5,6 +5,19 @@ import common from "../../shared/auth";
 const register = async (req: IRegister) => {
     try {
         const { password, ...rest } = req;
+
+        // Validate that the website exists
+        const website = await userrepo.findWebsiteById(Number(rest.webId));
+        if (!website) {
+            throw new Error('Website not found');
+        }
+
+        // Check if user already exists by username or email
+        const existingUser = await findOneUser(rest.username) || await findOneUser(rest.email);
+        if (existingUser) {
+            throw new Error('User already exists');
+        }
+
         const hashedPassword = await common.setPasswordHash(password);
         const reqWithHashedPassword = { ...rest, password: hashedPassword };
         const response = await userrepo.register(reqWithHashedPassword);

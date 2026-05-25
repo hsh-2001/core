@@ -29,7 +29,7 @@ const comparePassword = async (password: string, hash: string): Promise<boolean>
 const generateToken = async (payload: ITokenPayload): Promise<string> => {
     const token = await new jose.SignJWT(payload as unknown as jose.JWTPayload)
         .setProtectedHeader({ alg: 'HS256' })
-        .setExpirationTime('2h')
+        .setExpirationTime('7d')
         .sign(getJwtSecret());
     return token;
 }

@@ -54,6 +54,18 @@ const findUserByUsernameOrEmail = async (identifier: string) => {
 }
 
 
+const findWebsiteById = async (webId: number) => {
+    try {
+        const response = await query(
+            'SELECT id, web_name AS "webName", domain FROM websites WHERE id = $1',
+            [webId]
+        ) as any[];
+        return response[0] ?? null;
+    } catch (error) {
+        return null;
+    }
+}
+
 const getAllUsersByWebId = async (webId: number) => {
     try {
         const response = await query(
@@ -69,5 +81,6 @@ export default {
     register,
     findOneUser: findUserByUsernameOrEmail,
     getAllUsersByWebId,
-    login
+    login,
+    findWebsiteById
 }

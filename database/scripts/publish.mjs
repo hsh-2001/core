@@ -20,6 +20,97 @@ export const db = neon(connectionString);
 const tableDir = path.join(repoRoot, "database", "tables");
 const functionDir = path.join(repoRoot, "database", "functions");
 
+const splitSqlStatements = (sql) => {
+  const statements = [];
+  let current = "";
+  let singleQuoted = false;
+  let doubleQuoted = false;
+  let lineComment = false;
+  let blockComment = false;
+  let dollarQuoteTag = null;
+
+  for (let i = 0; i < sql.length; i += 1) {
+    const char = sql[i];
+    const next = sql[i + 1];
+
+    if (lineComment) {
+      current += char;
+      if (char === "\n") {
+        lineComment = false;
+      }
+      continue;
+    }
+
+    if (blockComment) {
+      current += char;
+      if (char === "*" && next === "/") {
+        current += next;
+        i += 1;
+        blockComment = false;
+      }
+      continue;
+    }
+
+    if (dollarQuoteTag) {
+      current += char;
+      if (sql.startsWith(dollarQuoteTag, i)) {
+        current += sql.slice(i + 1, i + dollarQuoteTag.length);
+        i += dollarQuoteTag.length - 1;
+        dollarQuoteTag = null;
+      }
+      continue;
+    }
+
+    if (!singleQuoted && !doubleQuoted && char === "-" && next === "-") {
+      current += char + next;
+      i += 1;
+      lineComment = true;
+      continue;
+    }
+
+    if (!singleQuoted && !doubleQuoted && char === "/" && next === "*") {
+      current += char + next;
+      i += 1;
+      blockComment = true;
+      continue;
+    }
+
+    if (!singleQuoted && !doubleQuoted && char === "$") {
+      const match = sql.slice(i).match(/^\$[A-Za-z_][A-Za-z0-9_]*\$|^\$\$/);
+      if (match) {
+        dollarQuoteTag = match[0];
+        current += dollarQuoteTag;
+        i += dollarQuoteTag.length - 1;
+        continue;
+      }
+    }
+
+    if (!doubleQuoted && char === "'" && sql[i - 1] !== "\\") {
+      singleQuoted = !singleQuoted;
+    } else if (!singleQuoted && char === '"') {
+      doubleQuoted = !doubleQuoted;
+    }
+
+    if (!singleQuoted && !doubleQuoted && char === ";") {
+      const statement = current.trim();
+      if (statement) {
+        statements.push(statement);
+      }
+      current = "";
+      continue;
+    }
+
+    current += char;
+  }
+
+  const statement = current.trim();
+  if (statement) {
+    statements.push(statement);
+  }
+
+  return statements;
+};
+
 const getSqlFiles = (dir) => {
   if (!fs.existsSync(dir)) {
     return [];
@@ -34,8 +125,18 @@ const getSqlFiles = (dir) => {
 const publishFiles = async (dir, files, label) => {
   for (const file of files) {
     const sql = fs.readFileSync(path.join(dir, file), "utf-8");
-    await db.query(sql);
-    console.log(`Published ${label}: ${file}`);
+    const statements = splitSqlStatements(sql);
+
+    if (statements.length === 0) {
+      console.log(`Skipped empty ${label}: ${file}`);
+      continue;
+    }
+
+    for (const statement of statements) {
+      await db.query(statement);
+    }
+
+    console.log(`Published ${label}: ${file} (${statements.length} statement${statements.length === 1 ? "" : "s"})`);
   }
 };
 

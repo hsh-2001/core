@@ -1,4 +1,4 @@
-CREATE TABLE otp_verification (
+CREATE TABLE IF NOT EXISTS otp_verification (
     id SERIAL PRIMARY KEY,
     web_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
@@ -9,6 +9,6 @@ CREATE TABLE otp_verification (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_otp_verification_web_id ON otp_verification (web_id);
-CREATE INDEX idx_otp_verification_user_id ON otp_verification (user_id);
-CREATE INDEX idx_otp_verification_identifier ON otp_verification (identifier);
+CREATE INDEX IF NOT EXISTS idx_otp_verification_web_id ON otp_verification (web_id);
+CREATE INDEX IF NOT EXISTS idx_otp_verification_user_id ON otp_verification (user_id);
+CREATE INDEX IF NOT EXISTS idx_otp_verification_identifier ON otp_verification (identifier);
