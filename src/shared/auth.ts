@@ -1,4 +1,4 @@
-import type { ITokenPayload } from './../models/user';
+import type { ITokenPayload } from '../modules/user/user.types';
 import bcrypt from "bcryptjs";
 import * as jose from 'jose';
 

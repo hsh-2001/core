@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
-import user from './routes/user';
-import commonRoute from './routes/common';
-import type { AppEnv } from './types';
-import { setDatabaseUrl } from './utils/db';
-import { setJwtSecret } from './utils/common';
+import user from './modules/user/user.routes';
+import commonRoute from './modules/common/common.routes';
+import type { AppEnv } from './shared/types';
+import { setDatabaseUrl } from './shared/db';
+import { setJwtSecret } from './shared/auth';
 
 const app = new Hono<AppEnv>()
 

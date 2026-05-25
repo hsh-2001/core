@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import commoncontroller from '../controllers/commonController';
+import commoncontroller from './common.controller';
 
 const common = new Hono();
 

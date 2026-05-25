@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
-import userController from '../controllers/userController';
-import type { AppEnv } from '../types';
+import userController from './user.controller';
+import type { AppEnv } from '../../shared/types';
 
 const user = new Hono<AppEnv>();
 

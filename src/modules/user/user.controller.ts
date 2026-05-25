@@ -1,6 +1,6 @@
-import userservice from "../services/userService";
+import userservice from "./user.service";
 import type { Context } from "hono";
-import type { AppEnv } from "../types";
+import type { AppEnv } from "../../shared/types";
 
 const register = async (c: Context<AppEnv>) => {
   const { webId, username, password, email } = await c.req.json();

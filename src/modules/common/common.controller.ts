@@ -1,6 +1,6 @@
-import commonService from "../services/commonService";
+import commonService from "./common.service";
 import type { Context } from "hono";
-import type { AppEnv } from "../types";
+import type { AppEnv } from "../../shared/types";
 
 type SendEmailBody = {
     to?: string;

@@ -3,6 +3,18 @@ npm install
 npm run dev
 ```
 
+## Source layout
+
+```txt
+src/
+  index.ts            # Cloudflare Worker entrypoint
+  server.ts           # Node local server entrypoint
+  modules/
+    common/           # Common API routes, controller, service
+    user/             # User API routes, controller, service, repository, types
+  shared/             # Cross-cutting app types, auth helpers, database client
+```
+
 ```txt
 npm run deploy
 ```

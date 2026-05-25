@@ -1,6 +1,6 @@
-import { IRegister } from "../models/user";
-import userrepo from "../repositories/userRepo";
-import common from "../utils/common";
+import { IRegister } from "./user.types";
+import userrepo from "./user.repository";
+import common from "../../shared/auth";
 
 const register = async (req: IRegister) => {
     try {

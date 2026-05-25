@@ -1,6 +1,6 @@
-import { IRegister } from "../models/user";
-import common from "../utils/common";
-import query from "../utils/db";
+import { IRegister } from "./user.types";
+import common from "../../shared/auth";
+import query from "../../shared/db";
 
 const register = async (req: IRegister) => {
     const { webId, username, password, email } = req;
