@@ -34,6 +34,7 @@ const readData = (filename) => {
 const clearTables = async () => {
   // Clear in reverse dependency order to avoid relying on CASCADE
   const tables = [
+    "temples",
     "geography_villages",
     "geography_communes",
     "geography_districts",
@@ -70,8 +71,67 @@ const seedTable = async (table, filename, columns, mapper) => {
   }
 };
 
+const seedTemples = async () => {
+  const data = readData("temples.json");
+  if (data.length === 0) {
+    console.log("  ⏭️  Skipping temples (no data)");
+    return;
+  }
+
+  const columns = [
+    "id",
+    "name_en",
+    "name_km",
+    "description",
+    "image_url",
+    "province_id",
+    "district_id",
+    "commune_id",
+    "village_id",
+    "latitude",
+    "longitude",
+  ];
+  const rows = data.map((d) => [
+    d.id,
+    d.name_en,
+    d.name_km,
+    d.description,
+    d.image_url,
+    d.province_id,
+    d.district_id,
+    d.commune_id,
+    d.village_id,
+    d.latitude,
+    d.longitude,
+  ]);
+
+  const colList = columns.join(", ");
+  let paramIdx = 0;
+  const valueGroups = rows.map((row) => {
+    const placeholders = row.map(() => `$${++paramIdx}`).join(", ");
+    return `(${placeholders})`;
+  });
+  const values = rows.flat();
+  const sql = `INSERT INTO temples (${colList}) VALUES ${valueGroups.join(", ")} ON CONFLICT (id) DO UPDATE SET
+    name_en = EXCLUDED.name_en,
+    name_km = EXCLUDED.name_km,
+    description = EXCLUDED.description,
+    image_url = EXCLUDED.image_url,
+    province_id = EXCLUDED.province_id,
+    district_id = EXCLUDED.district_id,
+    commune_id = EXCLUDED.commune_id,
+    village_id = EXCLUDED.village_id,
+    latitude = EXCLUDED.latitude,
+    longitude = EXCLUDED.longitude,
+    updated_at = NOW()`;
+
+  await db.query(sql, values);
+  await db.query("SELECT setval(pg_get_serial_sequence('temples', 'id'), COALESCE((SELECT MAX(id) FROM temples), 1), true)");
+  console.log(`  ✅ Inserted ${rows.length} / ${rows.length} into temples`);
+};
+
 const seed = async () => {
-  console.log("🌍 Seeding Cambodia geography data...\n");
+  console.log("🌍 Seeding Cambodia geography and temple data...\n");
 
   await clearTables();
 
@@ -100,8 +160,9 @@ const seed = async () => {
     ["id", "name_en", "name_km", "commune_id", "district_id", "province_id"],
     (d) => [d.id, d.name_en, d.name_km, d.commune_id, d.district_id, d.province_id],
   );
+  await seedTemples();
 
-  console.log("\n✅ Geography seeding complete!");
+  console.log("\n✅ Cambodia geography and temple seeding complete!");
 };
 
 // --- CLI entry point ---

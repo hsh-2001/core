@@ -30,6 +30,37 @@ GET /api/geography/detail?communeId=120101
 GET /api/geography/detail?villageId=12010101
 ```
 
+## Temple APIs
+
+Temple records are exposed under `/api/temples`.
+
+```http
+POST /api/temples
+GET /api/temples
+GET /api/temples/:id
+```
+
+`POST /api/temples` accepts:
+
+```json
+{
+  "nameEn": "Angkor Wat",
+  "nameKm": "អង្គរវត្ត",
+  "description": "Temple description",
+  "imageUrl": "https://example.com/angkor.jpg",
+  "provinceId": "17",
+  "districtId": "1702",
+  "communeId": "170201",
+  "villageId": "17020101",
+  "latitude": 13.4125,
+  "longitude": 103.867
+}
+```
+
+`GET /api/temples` supports `q`, `provinceId`, `districtId`, `communeId`, `villageId`, `limit`, and `offset` query params.
+
+Temple API responses include `mapUrl` when `latitude` and `longitude` are available.
+
 Supported filters include `id`, `name_en`, `name_km`, `provinceId`, `districtId`, `communeId`, and `q` for a local name contains search on the returned records.
 
 ```txt

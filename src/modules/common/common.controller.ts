@@ -1,6 +1,7 @@
 import commonService from "./common.service";
 import type { Context } from "hono";
 import type { AppEnv } from "../../shared/types";
+import { sendError, sendSuccess, sendValidationError } from "../../shared/response";
 
 type SendEmailBody = {
     to?: string;
@@ -15,23 +16,22 @@ const sendEmail = async (c: Context<AppEnv>) => {
         const { to, subject, html } = await c.req.json<SendEmailBody>();
 
         if (isBlank(subject)) {
-            return c.json({ success: false, message: "`subject` field is required" }, 400);
+            return sendValidationError(c, "`subject` field is required");
         }
 
         if (isBlank(to)) {
-            return c.json({ success: false, message: "`to` field is required" }, 400);
+            return sendValidationError(c, "`to` field is required");
         }
 
         if (isBlank(html)) {
-            return c.json({ success: false, message: "`html` field is required" }, 400);
+            return sendValidationError(c, "`html` field is required");
         }
 
         const response = await commonService.senderEmail(to as string, subject as string, html as string);
 
-        return c.json({ success: true, message: "Email sent successfully", data: response });
+        return sendSuccess(c, response, { message: "Email sent successfully" });
     } catch (error) {
-        const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        return c.json({ success: false, message: "Error sending email", error: message }, 500);
+        return sendError(c, error, 500, "Error sending email");
     }
 };
 

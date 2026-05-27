@@ -2,9 +2,11 @@ import { Hono } from 'hono'
 import user from './modules/user/user.routes';
 import commonRoute from './modules/common/common.routes';
 import geography from './modules/geography/geography.routes';
+import temple from './modules/temple/temple.routes';
 import type { AppEnv } from './shared/types';
 import { setDatabaseUrl } from './shared/db';
 import { setJwtSecret } from './shared/auth';
+import { sendError, sendSuccess } from './shared/response';
 
 const app = new Hono<AppEnv>()
 
@@ -16,11 +18,20 @@ app.use('*', async (c, next) => {
 });
 
 app.get('/api', (c) => {
-  return c.text('Hello Hono!')
+  return sendSuccess(c, { service: 'Core API' });
 })
 
 app.route('/api/user', user);
 app.route('/api/common', commonRoute);
 app.route('/api/geography', geography);
+app.route('/api/temples', temple);
+
+app.notFound((c) => {
+  return sendError(c, new Error('Route not found'), 404);
+});
+
+app.onError((error, c) => {
+  return sendError(c, error);
+});
 
 export default app
