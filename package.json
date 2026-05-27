@@ -8,6 +8,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
+    "docs:deploy": "npm run docs:build && wrangler pages deploy docs/.vitepress/dist --project-name core-docs",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "publish:db": "node ./database/scripts/publish.mjs",
