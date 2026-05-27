@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import user from './modules/user/user.routes';
 import commonRoute from './modules/common/common.routes';
+import geography from './modules/geography/geography.routes';
 import type { AppEnv } from './shared/types';
 import { setDatabaseUrl } from './shared/db';
 import { setJwtSecret } from './shared/auth';
@@ -20,5 +21,6 @@ app.get('/api', (c) => {
 
 app.route('/api/user', user);
 app.route('/api/common', commonRoute);
+app.route('/api/geography', geography);
 
 export default app

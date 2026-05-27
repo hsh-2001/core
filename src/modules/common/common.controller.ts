@@ -26,7 +26,7 @@ const sendEmail = async (c: Context<AppEnv>) => {
             return c.json({ success: false, message: "`html` field is required" }, 400);
         }
 
-        const response = await commonService.senderEmail(to, subject, html);
+        const response = await commonService.senderEmail(to as string, subject as string, html as string);
 
         return c.json({ success: true, message: "Email sent successfully", data: response });
     } catch (error) {
