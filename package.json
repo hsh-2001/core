@@ -1,6 +1,9 @@
 {
   "name": "core",
   "type": "module",
+  "engines": {
+    "node": ">=22 <25"
+  },
   "scripts": {
     "dev": "wrangler dev --local --env .env",
     "build": "wrangler build",
@@ -8,7 +11,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "docs:deploy": "npm run docs:build && wrangler pages deploy docs/.vitepress/dist --project-name core-docs",
+    "docs:deploy": "npm run docs:build && wrangler pages deploy --config wrangler.pages.jsonc",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "publish:db": "node ./database/scripts/publish.mjs",
@@ -16,7 +19,7 @@
     "reset:db": "node ./database/scripts/publish.mjs && node ./database/seeds/seed.mjs"
   },
   "dependencies": {
-    "@hono/node-server": "^2.0.2",
+    "@hono/node-server": "^2.0.2",  
     "@neondatabase/serverless": "^1.1.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
