@@ -15,7 +15,7 @@ export const sendSuccess = <T>(
   options: SuccessOptions = {},
 ) => {
   const { message = "Success", status = 200 } = options;
-  return c.json({ success: true, message, data }, status);
+  return c.json({ success: true, message, data }, status as any);
 };
 
 export const sendError = (
@@ -25,7 +25,7 @@ export const sendError = (
   fallbackMessage = DEFAULT_ERROR_MESSAGE,
 ) => {
   const message = error instanceof Error ? error.message : fallbackMessage;
-  return c.json({ success: false, message }, status);
+  return c.json({ success: false, message }, status as any);
 };
 
 export const sendValidationError = (
