@@ -27,7 +27,12 @@ const sendEmail = async (c: Context<AppEnv>) => {
             return sendValidationError(c, "`html` field is required");
         }
 
-        const response = await commonService.senderEmail(to as string, subject as string, html as string);
+        const response = await commonService.senderEmail({
+            to: to as string,
+            subject: subject as string,
+            html: html as string,
+            env: c.env,
+        });
 
         return sendSuccess(c, response, { message: "Email sent successfully" });
     } catch (error) {

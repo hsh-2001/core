@@ -1,30 +1,43 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+import type { Bindings } from '../../shared/types';
 
-const senderEmail = async (to: string, subject: string, text: string) => {
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL || "shkh1601@gmail.com",
-            pass: process.env.PASSWORD || "vcni fmet kblx catq"
-        }
-    });
+type SendEmailInput = {
+    to: string;
+    subject: string;
+    html: string;
+    env?: Partial<Bindings>;
+};
 
-    const mailOptions = {
-        from: process.env.EMAIL,
+const getNodeEnv = () => typeof process === 'undefined' ? undefined : process.env;
+
+const senderEmail = async ({ to, subject, html, env }: SendEmailInput) => {
+    const nodeEnv = getNodeEnv();
+    const apiKey = env?.RESEND_API_KEY ?? nodeEnv?.RESEND_API_KEY;
+    const from = env?.EMAIL_FROM ?? nodeEnv?.EMAIL_FROM;
+
+    if (!apiKey) {
+        throw new Error('RESEND_API_KEY is not set');
+    }
+
+    if (!from) {
+        throw new Error('EMAIL_FROM is not set');
+    }
+
+    const resend = new Resend(apiKey);
+    const { data, error } = await resend.emails.send({
+        from,
         to,
         subject,
-        text
-    };
+        html,
+    });
 
-    try {
-        await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully');
+    if (error) {
+        throw new Error(error.message);
     }
-    catch (error) {
-        console.error('Error sending email:', error);
-    }
+
+    return data;
 };
 
 export default {
     senderEmail
-}
+};

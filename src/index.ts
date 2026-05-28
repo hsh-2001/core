@@ -7,9 +7,9 @@ import type { AppEnv } from './shared/types';
 import { setDatabaseUrl } from './shared/db';
 import { setJwtSecret } from './shared/auth';
 import { sendError, sendSuccess } from './shared/response';
-import './cron';
+import { sendCronEmail } from './cron';
 
-const app = new Hono<AppEnv>()
+export const app = new Hono<AppEnv>()
 
 app.use('*', async (c, next) => {
   const nodeEnv = typeof process === 'undefined' ? undefined : process.env;
@@ -35,4 +35,11 @@ app.onError((error, c) => {
   return sendError(c, error);
 });
 
-export default app
+export default {
+  fetch: (request: Request, env: AppEnv['Bindings'], ctx: ExecutionContext) => {
+    return app.fetch(request, env, ctx);
+  },
+  scheduled: (controller: ScheduledController, env: AppEnv['Bindings'], ctx: ExecutionContext) => {
+    ctx.waitUntil(sendCronEmail(env, controller));
+  },
+}

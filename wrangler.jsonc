@@ -6,7 +6,12 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "workers_dev": true
+  "workers_dev": true,
+  "triggers": {
+    "crons": [
+      "*/5 * * * *"
+    ]
+  }
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
