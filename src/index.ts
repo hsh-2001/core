@@ -7,6 +7,7 @@ import type { AppEnv } from './shared/types';
 import { setDatabaseUrl } from './shared/db';
 import { setJwtSecret } from './shared/auth';
 import { sendError, sendSuccess } from './shared/response';
+import './cron';
 
 const app = new Hono<AppEnv>()
 
