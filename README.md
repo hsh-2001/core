@@ -3,6 +3,45 @@ npm install
 npm run dev
 ```
 
+## Scheduled email
+
+The Worker has a cron trigger configured in `wrangler.jsonc`:
+
+```txt
+*/5 * * * *
+```
+
+For local testing, Wrangler reads Worker bindings from `.dev.vars`, not `.env`.
+
+```txt
+cp .dev.vars.example .dev.vars
+npm run dev
+```
+
+Then trigger the scheduled handler manually:
+
+```txt
+curl http://localhost:8787/__scheduled
+```
+
+Required local and deployed bindings:
+
+```txt
+DATABASE_URL
+JWT_SECRET
+RESEND_API_KEY
+EMAIL_FROM
+```
+
+Before deploying, set the private values as Worker secrets:
+
+```txt
+npx wrangler secret put DATABASE_URL
+npx wrangler secret put JWT_SECRET
+npx wrangler secret put RESEND_API_KEY
+npx wrangler secret put EMAIL_FROM
+```
+
 ## Source layout
 
 ```txt
