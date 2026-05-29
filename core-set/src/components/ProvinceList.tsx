@@ -1,24 +1,8 @@
-import { useEffect, useState } from "react";
-import geoApi from "../api/geo.api";
 import type { IProvince } from "../types/geography";
+import useGeography from "../hooks/useGeography";
 
 function ProvinceList() {
-  const [provinces, setProvinces] = useState<IProvince[]>([]);
-
-  useEffect(() => {
-    const fetchProvinces = async () => {
-      try {
-        const response = await geoApi.callGetProvinces();
-        if (response.status === 200) {
-          console.log("Provinces fetched successfully:", response.data.data);
-          setProvinces(response.data.data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchProvinces();
-  }, []);
+  const { provinces } = useGeography();
 
   return (
     <div>

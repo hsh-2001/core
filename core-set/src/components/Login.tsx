@@ -1,25 +1,7 @@
-import { useState } from "react";
-import authApi from "../api/auth.api";
-import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function Login() {
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await authApi.callLogin({ identifier, password });
-      if (response.status === 200) {
-        const { token } = response.data;
-        localStorage.setItem("token", token);
-        navigate("/admin");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { setIdentifier, setPassword, handleSubmit } = useAuth();
 
   return (
     <div className="h-full flex items-center justify-center p-4 bg-gray-200 rounded-md">
