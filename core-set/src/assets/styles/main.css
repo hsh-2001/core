@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+input {
+    @apply mt-1 block h-8 w-full border-gray-300 rounded-md px-2 border outline-none focus:ring-[0.5px] focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+}

@@ -8,6 +8,7 @@ import { setDatabaseUrl } from './shared/db';
 import { setJwtSecret } from './shared/auth';
 import { sendError, sendSuccess } from './shared/response';
 import { sendCronEmail } from './cron';
+import { cors } from 'hono/cors';
 
 export const app = new Hono<AppEnv>()
 
@@ -17,6 +18,17 @@ app.use('*', async (c, next) => {
   setJwtSecret(c.env?.JWT_SECRET ?? nodeEnv?.JWT_SECRET ?? '');
   await next();
 });
+
+app.use(
+  '*',
+  cors({
+    origin: "*",
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  })
+)
+
 
 app.get('/api', (c) => {
   return sendSuccess(c, { service: 'Core API' });
