@@ -10,6 +10,9 @@ function MainHeader() {
         <Link to="/admin/geography" className="px-4 py-2">
           Geography
         </Link>
+        <Link to="/admin/temples" className="px-4 py-2">
+          Temples
+        </Link>
       </nav>
     </div>
   );
