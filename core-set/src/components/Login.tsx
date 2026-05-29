@@ -9,7 +9,11 @@ function Login() {
     e.preventDefault();
     try {
       const response = await authApi.callLogin({ identifier, password });
-      console.log(response.data);
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem("token", token);
+        alert("Login successful!");
+      }
     } catch (error) {
       console.error(error);
     }
