@@ -22,7 +22,7 @@ app.use('*', async (c, next) => {
 app.use(
   '*',
   cors({
-    origin: "*",
+    origin: '*',
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   })
