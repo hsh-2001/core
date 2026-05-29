@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import CambodiaMap from "../../components/CambodiaMap";
 import useGeography from "../../hooks/useGeography";
-import type { GeographyItem, GeographyLevel } from "../../types/geography";
+import type { GeographyDetail, GeographyItem, GeographyLevel } from "../../types/geography";
 
 type GeographyColumnProps<T extends GeographyItem> = {
   title: string;
@@ -45,6 +46,43 @@ const getSelectedLevel = (
   if (provinceId) return "province";
 
   return null;
+};
+
+const getSelectedProvinceId = (detail: GeographyDetail | null, selectedProvinceId: string | null) => {
+  if (!detail) return selectedProvinceId;
+
+  return (
+    detail.village?.province_id ??
+    detail.commune?.province_id ??
+    detail.district?.province_id ??
+    detail.province?.id ??
+    selectedProvinceId
+  );
+};
+
+const getSelectedName = (detail: GeographyDetail | null) => {
+  if (!detail) return undefined;
+
+  return (
+    detail.village?.name_en ??
+    detail.commune?.name_en ??
+    detail.district?.name_en ??
+    detail.province?.name_en
+  );
+};
+
+const getMapSearchQuery = (detail: GeographyDetail | null) => {
+  if (!detail) return "Cambodia";
+
+  const parts = [
+    detail.village?.name_en,
+    detail.commune?.name_en,
+    detail.district?.name_en,
+    detail.province?.name_en,
+    "Cambodia",
+  ].filter(Boolean);
+
+  return parts.join(", ");
 };
 
 function GeographyColumn<T extends GeographyItem>({
@@ -132,6 +170,9 @@ function GeographyPage() {
     selectedDistrictId,
     selectedProvinceId,
   );
+  const mapProvinceId = getSelectedProvinceId(detail, selectedProvinceId);
+  const mapSelectedName = getSelectedName(detail);
+  const mapSearchQuery = getMapSearchQuery(detail);
 
   const handleSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -222,33 +263,42 @@ function GeographyPage() {
           />
         </div>
 
-        <section className="border border-gray-200 bg-white p-5 text-left">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-950">Detail</h2>
-              <p className="text-sm text-gray-500">
-                {selectedLevel ? `Selected ${selectedLevel}` : "Select a record to load detail data."}
-              </p>
-            </div>
-            {loading.detail ? <span className="text-sm text-gray-500">Loading detail...</span> : null}
-          </div>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(22rem,1fr)]">
+          <CambodiaMap
+            provinceId={mapProvinceId}
+            selectedName={mapSelectedName}
+            selectedLevel={selectedLevel}
+            searchQuery={mapSearchQuery}
+          />
 
-          {detail ? (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-              {detail.province ? <DetailCard title="Province" item={detail.province} /> : null}
-              {detail.district ? <DetailCard title="District" item={detail.district} /> : null}
-              {detail.commune ? <DetailCard title="Commune" item={detail.commune} /> : null}
-              {detail.village ? <DetailCard title="Village" item={detail.village} /> : null}
-              {detail.districts ? <RelatedCount title="Districts" count={detail.districts.length} /> : null}
-              {detail.communes ? <RelatedCount title="Communes" count={detail.communes.length} /> : null}
-              {detail.villages ? <RelatedCount title="Villages" count={detail.villages.length} /> : null}
+          <section className="border border-gray-200 bg-white p-5 text-left">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-950">Detail</h2>
+                <p className="text-sm text-gray-500">
+                  {selectedLevel ? `Selected ${selectedLevel}` : "Select a record to load detail data."}
+                </p>
+              </div>
+              {loading.detail ? <span className="text-sm text-gray-500">Loading detail...</span> : null}
             </div>
-          ) : (
-            <div className="border border-dashed border-gray-300 px-4 py-8 text-center text-sm text-gray-500">
-              No detail loaded.
-            </div>
-          )}
-        </section>
+
+            {detail ? (
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {detail.province ? <DetailCard title="Province" item={detail.province} /> : null}
+                {detail.district ? <DetailCard title="District" item={detail.district} /> : null}
+                {detail.commune ? <DetailCard title="Commune" item={detail.commune} /> : null}
+                {detail.village ? <DetailCard title="Village" item={detail.village} /> : null}
+                {detail.districts ? <RelatedCount title="Districts" count={detail.districts.length} /> : null}
+                {detail.communes ? <RelatedCount title="Communes" count={detail.communes.length} /> : null}
+                {detail.villages ? <RelatedCount title="Villages" count={detail.villages.length} /> : null}
+              </div>
+            ) : (
+              <div className="border border-dashed border-gray-300 px-4 py-8 text-center text-sm text-gray-500">
+                No detail loaded.
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </main>
   );
