@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+import * as nodemailer from 'nodemailer';
 import type { Bindings } from '../../shared/types';
 
 type SendEmailInput = {
@@ -12,30 +12,46 @@ const getNodeEnv = () => typeof process === 'undefined' ? undefined : process.en
 
 const senderEmail = async ({ to, subject, html, env }: SendEmailInput) => {
     const nodeEnv = getNodeEnv();
-    const apiKey = env?.RESEND_API_KEY ?? nodeEnv?.RESEND_API_KEY;
+    const host = env?.SMTP_HOST ?? nodeEnv?.SMTP_HOST;
+    const port = Number(env?.SMTP_PORT ?? nodeEnv?.SMTP_PORT ?? 587);
+    const user = env?.SMTP_USER ?? nodeEnv?.SMTP_USER;
+    const pass = env?.SMTP_PASS ?? nodeEnv?.SMTP_PASS;
+    const secureValue = env?.SMTP_SECURE ?? nodeEnv?.SMTP_SECURE;
+    const secure = secureValue === undefined ? port === 465 : secureValue === 'true';
     const from = env?.EMAIL_FROM ?? nodeEnv?.EMAIL_FROM;
 
-    if (!apiKey) {
-        throw new Error('RESEND_API_KEY is not set');
+    if (!host) {
+        throw new Error('SMTP_HOST is not set');
+    }
+
+    if (Number.isNaN(port)) {
+        throw new Error('SMTP_PORT must be a number');
     }
 
     if (!from) {
         throw new Error('EMAIL_FROM is not set');
     }
 
-    const resend = new Resend(apiKey);
-    const { data, error } = await resend.emails.send({
+    const transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        auth: user && pass ? { user, pass } : undefined,
+    });
+
+    const info = await transporter.sendMail({
         from,
         to,
         subject,
         html,
     });
 
-    if (error) {
-        throw new Error(error.message);
-    }
-
-    return data;
+    return {
+        messageId: info.messageId,
+        accepted: info.accepted,
+        rejected: info.rejected,
+        response: info.response,
+    };
 };
 
 export default {

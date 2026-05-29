@@ -19,6 +19,12 @@ export const db = neon(connectionString);
 
 const tableDir = path.join(repoRoot, "database", "tables");
 const functionDir = path.join(repoRoot, "database", "functions");
+const tablePublishOrder = [
+  "geography_provinces.sql",
+  "geography_districts.sql",
+  "geography_communes.sql",
+  "geography_villages.sql",
+];
 
 const splitSqlStatements = (sql) => {
   const statements = [];
@@ -122,6 +128,21 @@ const getSqlFiles = (dir) => {
     .sort();
 };
 
+const sortTableFiles = (files) => {
+  const priority = new Map(tablePublishOrder.map((file, index) => [file, index]));
+
+  return [...files].sort((left, right) => {
+    const leftPriority = priority.get(left) ?? Number.MAX_SAFE_INTEGER;
+    const rightPriority = priority.get(right) ?? Number.MAX_SAFE_INTEGER;
+
+    if (leftPriority !== rightPriority) {
+      return leftPriority - rightPriority;
+    }
+
+    return left.localeCompare(right);
+  });
+};
+
 const publishFiles = async (dir, files, label) => {
   for (const file of files) {
     const sql = fs.readFileSync(path.join(dir, file), "utf-8");
@@ -141,7 +162,7 @@ const publishFiles = async (dir, files, label) => {
 };
 
 export const publish = async () => {
-  const tableFiles = getSqlFiles(tableDir);
+  const tableFiles = sortTableFiles(getSqlFiles(tableDir));
   const functionFiles = getSqlFiles(functionDir);
 
   if (tableFiles.length === 0 && functionFiles.length === 0) {
