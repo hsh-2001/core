@@ -51,6 +51,6 @@ export default {
     return app.fetch(request, env, ctx);
   },
   scheduled: (controller: any, env: AppEnv['Bindings'], ctx: any) => {
-    ctx.waitUntil(sendCronEmail(env, controller));
+    // ctx.waitUntil(sendCronEmail(env, controller));
   },
 }
