@@ -14,7 +14,7 @@ const BASE_COLUMNS = ["id", "name_en", "name_km"];
 
 /** Additional FK columns per level */
 const FK_COLUMNS: Record<GeographyLevel, string[]> = {
-  provinces: [],
+  provinces: ["capital_city"],
   districts: ["province_id"],
   communes: ["district_id", "province_id"],
   villages: ["commune_id", "district_id", "province_id"],
@@ -30,7 +30,7 @@ const FILTER_ALIAS: Record<string, string> = {
 
 /** Filters we allow per level */
 const ALLOWED_FILTERS: Record<GeographyLevel, Set<string>> = {
-  provinces: new Set(["id", "name_en", "name_km"]),
+  provinces: new Set(["id", "name_en", "name_km", "capital_city"]),
   districts: new Set(["id", "name_en", "name_km", "province_id"]),
   communes: new Set(["id", "name_en", "name_km", "province_id", "district_id"]),
   villages: new Set(["id", "name_en", "name_km", "province_id", "district_id", "commune_id"]),
@@ -72,6 +72,7 @@ const buildWhereClauses = (
 };
 
 const buildQClause = (
+  level: GeographyLevel,
   q: string | undefined,
   paramIndex: number,
 ): [string, unknown[]] => {
@@ -80,8 +81,13 @@ const buildQClause = (
   if (!needle) return ["", []];
 
   const like = `%${needle.toLowerCase()}%`;
+  const columns = level === "provinces" ? ["name_en", "name_km", "capital_city"] : ["name_en", "name_km"];
+  const searchClause = columns
+    .map((column) => `LOWER(COALESCE(${column}, '')) LIKE $${paramIndex}`)
+    .join(" OR ");
+
   return [
-    `(LOWER(name_en) LIKE $${paramIndex} OR LOWER(name_km) LIKE $${paramIndex})`,
+    `(${searchClause})`,
     [like],
   ];
 };
@@ -92,7 +98,7 @@ const list = async (level: GeographyLevel, filters: GeographyQuery = {}): Promis
   const selectColumns = columns.join(', ');
 
   const [whereClauses, whereParams] = buildWhereClauses(level, filters);
-  const [qClause, qParams] = buildQClause(filters.q, whereParams.length + 1);
+  const [qClause, qParams] = buildQClause(level, filters.q, whereParams.length + 1);
 
   if (qClause) {
     whereClauses.push(qClause);

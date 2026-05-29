@@ -62,9 +62,11 @@ const seedTable = async (table, filename, columns, mapper) => {
       return `(${placeholders})`;
     });
     const values = batch.flat();
+    const updateColumns = columns
+      .filter((column) => column !== "id")
+      .map((column) => `${column} = EXCLUDED.${column}`);
     const sql = `INSERT INTO ${table} (${colList}) VALUES ${valueGroups.join(", ")} ON CONFLICT (id) DO UPDATE SET
-      name_en = EXCLUDED.name_en,
-      name_km = EXCLUDED.name_km,
+      ${updateColumns.join(",\n      ")},
       updated_at = NOW()`;
     await db.query(sql, values);
     console.log(`  ✅ Inserted ${Math.min(i + 500, rows.length)} / ${rows.length} into ${table}`);
@@ -139,8 +141,8 @@ const seed = async () => {
   await seedTable(
     "geography_provinces",
     "provinces.json",
-    ["id", "name_en", "name_km"],
-    (d) => [d.id, d.name_en, d.name_km],
+    ["id", "name_en", "name_km", "capital_city"],
+    (d) => [d.id, d.name_en, d.name_km, d.capital_city],
   );
   await seedTable(
     "geography_districts",

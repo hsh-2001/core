@@ -4,6 +4,7 @@ export type GeographyQuery = {
   id?: string;
   name_en?: string;
   name_km?: string;
+  capital_city?: string;
   province_id?: string;
   district_id?: string;
   commune_id?: string;
@@ -20,6 +21,7 @@ export type GeographyItem = {
   id: string;
   name_en: string;
   name_km: string;
+  capital_city?: string;
   province_id?: string;
   district_id?: string;
   commune_id?: string;

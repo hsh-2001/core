@@ -2,7 +2,7 @@
 
 Base path: `/api/geography`
 
-The geography module exposes Cambodia administrative geography. List endpoints support filters such as `id`, `name_en`, `name_km`, snake_case parent IDs, camelCase parent IDs, and `q` for contains search across English and Khmer names.
+The geography module exposes Cambodia administrative geography. List endpoints support filters such as `id`, `name_en`, `name_km`, snake_case parent IDs, camelCase parent IDs, and `q` for contains search across English names, Khmer names, and province capital cities.
 
 ## List Provinces
 
@@ -10,7 +10,7 @@ The geography module exposes Cambodia administrative geography. List endpoints s
 GET /api/geography/provinces
 ```
 
-Optional query params: `id`, `name_en`, `name_km`, `q`.
+Optional query params: `id`, `name_en`, `name_km`, `capital_city`, `q`.
 
 ## List Districts
 
@@ -63,6 +63,7 @@ If no supported ID is provided, the API returns `400`.
   "id": "1201",
   "name_en": "District name",
   "name_km": "ឈ្មោះស្រុក",
+  "capital_city": "Capital city name",
   "province_id": "12",
   "district_id": "1201",
   "commune_id": "120101"
