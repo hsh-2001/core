@@ -36,10 +36,10 @@ app.onError((error, c) => {
 });
 
 export default {
-  fetch: (request: Request, env: AppEnv['Bindings'], ctx: ExecutionContext) => {
+  fetch: (request: Request, env: AppEnv['Bindings'], ctx: any) => {
     return app.fetch(request, env, ctx);
   },
-  scheduled: (controller: ScheduledController, env: AppEnv['Bindings'], ctx: ExecutionContext) => {
+  scheduled: (controller: any, env: AppEnv['Bindings'], ctx: any) => {
     ctx.waitUntil(sendCronEmail(env, controller));
   },
 }
