@@ -2,6 +2,24 @@
 
 The Core service exposes Hono routes under `/api`.
 
+## Base Endpoint
+
+```http
+GET /api
+```
+
+Returns basic service metadata.
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": {
+    "service": "Core API"
+  }
+}
+```
+
 ## Modules
 
 | Module | Base path | Purpose |
@@ -10,6 +28,27 @@ The Core service exposes Hono routes under `/api`.
 | Geography | `/api/geography` | Query Cambodia administrative geography. |
 | Temples | `/api/temples` | Create and search temple records. |
 | Common | `/api/common` | Shared utility endpoints, including email sending. |
+
+## Response Envelope
+
+Successful responses use:
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": {}
+}
+```
+
+Failed responses use:
+
+```json
+{
+  "success": false,
+  "message": "Error message"
+}
+```
 
 ## Status Codes
 

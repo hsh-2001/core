@@ -28,6 +28,8 @@ Creates a user for an existing website.
 | `password` | string | Yes | Stored as a password hash. |
 | `email` | string | Yes | Must be unique. |
 
+`Website not found` and `User already exists` failures are returned as error responses.
+
 ### Response
 
 ```json
@@ -35,7 +37,8 @@ Creates a user for an existing website.
   "success": true,
   "message": "User registered successfully",
   "data": {
-    "message": "User registered successfully"
+    "message": "User registered successfully",
+    "userId": 1
   }
 }
 ```
@@ -68,7 +71,9 @@ Logs in with a username or email address.
     "id": 1,
     "webId": 1,
     "username": "demo",
-    "email": "demo@example.com"
+    "email": "demo@example.com",
+    "createdAt": "2026-05-30T00:00:00.000Z",
+    "updatedAt": "2026-05-30T00:00:00.000Z"
   }
 }
 ```
@@ -89,6 +94,10 @@ Finds a single user by username or email.
 | --- | --- | --- | --- |
 | `identifier` | path | string | Yes |
 
+### Response
+
+The current implementation returns the matching user record, including the hashed `password` field.
+
 ## List Users By Website
 
 ```http
@@ -102,3 +111,7 @@ Returns all users attached to one website.
 | Name | In | Type | Required |
 | --- | --- | --- | --- |
 | `webId` | path | number | Yes |
+
+### Response
+
+Returns an array of users for the website. The current implementation includes each user's hashed `password` field.

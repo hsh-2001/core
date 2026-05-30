@@ -1,7 +1,27 @@
+# Core API
+
+Hono API service for users, Cambodia geography, temple records, and shared utilities.
+
+## Run locally
+
 ```txt
 npm install
 npm run dev
 ```
+
+The Worker dev server runs with Wrangler. For the Node server entrypoint, run:
+
+```txt
+npm run start
+```
+
+## API docs
+
+```txt
+npm run docs:dev
+```
+
+The VitePress docs live in `docs/`. The API reference starts at `docs/api/index.md`.
 
 ## Scheduled email
 
@@ -29,7 +49,11 @@ Required local and deployed bindings:
 ```txt
 DATABASE_URL
 JWT_SECRET
-RESEND_API_KEY
+SMTP_HOST
+SMTP_PORT
+SMTP_USER
+SMTP_PASS
+SMTP_SECURE
 EMAIL_FROM
 ```
 
@@ -38,7 +62,11 @@ Before deploying, set the private values as Worker secrets:
 ```txt
 npx wrangler secret put DATABASE_URL
 npx wrangler secret put JWT_SECRET
-npx wrangler secret put RESEND_API_KEY
+npx wrangler secret put SMTP_HOST
+npx wrangler secret put SMTP_PORT
+npx wrangler secret put SMTP_USER
+npx wrangler secret put SMTP_PASS
+npx wrangler secret put SMTP_SECURE
 npx wrangler secret put EMAIL_FROM
 ```
 
@@ -50,6 +78,8 @@ src/
   server.ts           # Node local server entrypoint
   modules/
     common/           # Common API routes, controller, service
+    geography/        # Cambodia administrative geography APIs
+    temple/           # Temple API routes, controller, service, repository, types
     user/             # User API routes, controller, service, repository, types
   shared/             # Cross-cutting app types, auth helpers, database client
 ```
@@ -100,7 +130,9 @@ GET /api/temples/:id
 
 Temple API responses include `mapUrl` when `latitude` and `longitude` are available.
 
-Supported filters include `id`, `name_en`, `name_km`, `provinceId`, `districtId`, `communeId`, and `q` for a local name contains search on the returned records.
+`GET /api/temples` defaults to `limit=50`, caps `limit` at `100`, and defaults `offset` to `0`.
+
+## Deploy
 
 ```txt
 npm run deploy
@@ -112,7 +144,7 @@ npm run deploy
 npm run cf-typegen
 ```
 
-Pass the `CloudflareBindings` as generics when instantiation `Hono`:
+Pass the `CloudflareBindings` as generics when instantiating `Hono`:
 
 ```ts
 // src/index.ts

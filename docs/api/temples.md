@@ -40,6 +40,8 @@ POST /api/temples
 | `latitude` | number or string | No | Must be numeric when provided. |
 | `longitude` | number or string | No | Must be numeric when provided. |
 
+Blank optional string fields are stored as `null`.
+
 ### Response
 
 Returns `201`.
@@ -60,10 +62,14 @@ Returns `201`.
     "villageId": "17020101",
     "latitude": 13.4125,
     "longitude": 103.867,
+    "createdAt": "2026-05-30T00:00:00.000Z",
+    "updatedAt": "2026-05-30T00:00:00.000Z",
     "mapUrl": "https://www.google.com/maps/search/?api=1&query=13.4125,103.867"
   }
 }
 ```
+
+Validation failures return `400`, including missing `nameEn` or invalid `latitude` and `longitude` values.
 
 ## List Temples
 
@@ -83,6 +89,35 @@ GET /api/temples?q=angkor&provinceId=17&limit=20&offset=0
 | `limit` | string | No | Page size. |
 | `offset` | string | No | Row offset. |
 
+`limit` defaults to `50`, is capped at `100`, and has a minimum of `1`. `offset` defaults to `0`.
+
+### Response
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": [
+    {
+      "id": 1,
+      "nameEn": "Angkor Wat",
+      "nameKm": "អង្គរវត្ត",
+      "description": "Temple description",
+      "imageUrl": "https://example.com/angkor.jpg",
+      "provinceId": "17",
+      "districtId": "1702",
+      "communeId": "170201",
+      "villageId": "17020101",
+      "latitude": 13.4125,
+      "longitude": 103.867,
+      "createdAt": "2026-05-30T00:00:00.000Z",
+      "updatedAt": "2026-05-30T00:00:00.000Z",
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=13.4125,103.867"
+    }
+  ]
+}
+```
+
 ## Get Temple By ID
 
 ```http
@@ -96,3 +131,7 @@ GET /api/temples/:id
 | `id` | path | number | Yes |
 
 Invalid IDs return `400`. Missing temples return `404`.
+
+### Response
+
+Returns one temple object in the same shape as list results.
