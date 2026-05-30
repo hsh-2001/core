@@ -2,6 +2,12 @@
 
 The Core service exposes Hono routes under `/api`.
 
+## Base URL
+
+```txt
+https://core.shkh1601.workers.dev
+```
+
 ## Base Endpoint
 
 ```http

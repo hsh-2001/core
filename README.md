@@ -23,6 +23,12 @@ npm run docs:dev
 
 The VitePress docs live in `docs/`. The API reference starts at `docs/api/index.md`.
 
+Deployed API base URL:
+
+```txt
+https://core.shkh1601.workers.dev
+```
+
 ## Scheduled email
 
 The Worker has a cron trigger configured in `wrangler.jsonc`:
