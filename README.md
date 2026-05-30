@@ -1,6 +1,6 @@
 # Core API
 
-Hono API service for users, Cambodia geography, temple records, and shared utilities.
+API service for users, Cambodia geography, temple records, and shared utilities.
 
 ## Run locally
 
@@ -148,11 +148,4 @@ npm run deploy
 
 ```txt
 npm run cf-typegen
-```
-
-Pass the `CloudflareBindings` as generics when instantiating `Hono`:
-
-```ts
-// src/index.ts
-const app = new Hono<{ Bindings: CloudflareBindings }>()
 ```

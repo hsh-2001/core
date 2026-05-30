@@ -1,6 +1,6 @@
 # API Reference
 
-The Core service exposes Hono routes under `/api`.
+The Core service exposes API endpoints under `/api`.
 
 ## Base URL
 

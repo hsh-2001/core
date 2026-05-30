@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Core API
   text: API documentation guide
-  tagline: Hono service endpoints for users, geography, temples, and common utilities.
+  tagline: Service endpoints for users, geography, temples, and common utilities.
   actions:
     - theme: brand
       text: View API Reference
