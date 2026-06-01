@@ -77,10 +77,24 @@ const getAllUsersByWebId = async (webId: number) => {
         return [];
     }
 }
+
+const findUniqueUserByWebId = async (webId: number, username: string, email: string) => {
+    try {
+        const response = await query(
+            'SELECT id, web_id AS "webId", username, email, password, created_at AS "createdAt", updated_at AS "updatedAt" FROM users WHERE web_id = $1 AND (username = $2 OR email = $3)',
+            [webId, username, email]
+        ) as any[];
+        return response[0] ?? null;
+    } catch (error) {
+        return null;
+    }
+}
+
 export default {
     register,
     findOneUser: findUserByUsernameOrEmail,
     getAllUsersByWebId,
     login,
-    findWebsiteById
+    findWebsiteById,
+    findUniqueUserByWebId
 }

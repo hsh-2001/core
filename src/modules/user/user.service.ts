@@ -12,8 +12,7 @@ const register = async (req: IRegister) => {
             throw new Error('Website not found');
         }
 
-        // Check if user already exists by username or email
-        const existingUser = await findOneUser(rest.username) || await findOneUser(rest.email);
+        const existingUser = await userrepo.findUniqueUserByWebId(Number(rest.webId), rest.username, rest.email);
         if (existingUser) {
             throw new Error('User already exists');
         }
