@@ -54,6 +54,30 @@ const senderEmail = async ({ to, subject, html, env }: SendEmailInput) => {
     };
 };
 
+const autoMeetingScheduler = async () => {
+    const telegramChatId = "-1004233560362";
+    const message = "This is a test message from the auto meeting scheduler.";
+
+    const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            chat_id: telegramChatId,
+            text: message,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to send message to Telegram: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+}
+
 export default {
-    senderEmail
+    senderEmail,
+    autoMeetingScheduler
 };

@@ -40,6 +40,17 @@ const sendEmail = async (c: Context<AppEnv>) => {
     }
 };
 
+const autoMeetingScheduler = async (c: Context<AppEnv>) => {
+    try {
+        const response = await commonService.autoMeetingScheduler();
+        return sendSuccess(c, response, { message: "Auto meeting scheduler executed successfully" });
+    } catch (error) {
+        console.error("Error in autoMeetingScheduler:", error);
+        return sendError(c, error, 500, "Error executing auto meeting scheduler");
+    }
+}
+
 export default {
     sendEmail,
+    autoMeetingScheduler,
 };
