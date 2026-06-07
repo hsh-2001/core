@@ -14,15 +14,6 @@ jobs:
 
         
         steps:
-            - name: Debug secrets
-              run: |
-                  echo "Token length: ${#CLOUDFLARE_API_TOKEN}"
-                  if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-                  echo "TOKEN IS EMPTY"
-                  exit 1
-                  else
-                  echo "TOKEN EXISTS"
-                  fi
             - uses: actions/checkout@v3
 
             - uses: actions/setup-node@v3
